@@ -1,0 +1,13 @@
+[package]
+name = "forge"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+# For parsing command line arguments
+clap = { version = "4.4", features = ["derive"] }
+# For handling your forge.toml manifest
+serde = { version = "1.0", features = ["derive"] }
+toml = "1.0.6+spec-1.1.0"
+# For pretty terminal output
+colored = "3.1.1"
