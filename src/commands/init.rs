@@ -1,4 +1,5 @@
 use crate::templates::init_templates;
+use crate::utils::sys_utils;
 use clap::Args;
 use std::fs;
 use std::path::Path;
@@ -36,7 +37,10 @@ fn generate_proj_structure(project_path: &Path) -> std::io::Result<()> {
 }
 
 fn generate_config_file(project_path: &Path, proj_name: &str) -> std::io::Result<()> {
-    let content = init_templates::FORGE_TOML.replace("{name}", proj_name);
+    let compiler_path = &sys_utils::get_default_c_compiler();
+    let content = init_templates::FORGE_TOML
+        .replace("{name}", proj_name)
+        .replace("{compiler}", compiler_path);
     fs::write(project_path.join("forge.toml"), &content)?;
     Ok(())
 }

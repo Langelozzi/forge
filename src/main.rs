@@ -16,8 +16,8 @@ struct Cli {
 enum Commands {
     Init(commands::init::InitArgs),
     Add(commands::add::AddArgs),
+    Build(commands::build::BuildArgs),
     // Run,
-    // Build,
 }
 
 fn main() {
@@ -32,6 +32,11 @@ fn main() {
         Commands::Add(add_args) => {
             if let Err(e) = commands::add::handle_add(add_args) {
                 eprintln!("Error adding module: {}", e);
+            }
+        }
+        Commands::Build(build_args) => {
+            if let Err(e) = commands::build::handle_build(build_args) {
+                eprintln!("Error building project: {}", e);
             }
         }
     }

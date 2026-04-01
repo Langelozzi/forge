@@ -3,7 +3,9 @@ name = "{name}"
 version = "0.1.0"
 
 [build]
-ignore = []
+compiler = "{compiler}"
+flags = []
+ignore_files = []
 "#;
 
 pub const MAIN_C: &str = r#"#include <stdio.h>
