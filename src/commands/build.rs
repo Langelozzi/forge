@@ -5,17 +5,22 @@ use crate::constants;
 use crate::utils::fs_utils::change_to_proj_root;
 use crate::utils::fs_utils::create_dir_if_not_exists;
 use crate::utils::fs_utils::get_files_in_dir_recursive;
-use crate::utils::shell_utils::exec;
+use crate::utils::shell_utils::exec_raw;
 use crate::utils::vec_utils::difference;
 
 #[derive(Args, Debug, Clone)]
-pub struct BuildArgs {
-    // pub module_name: String,
-}
+pub struct BuildArgs {}
 
 pub fn handle_build(args: &BuildArgs) -> std::io::Result<()> {
     change_to_proj_root()?;
 
+    build()?;
+    println!("Project built successfully!");
+
+    Ok(())
+}
+
+pub fn build() -> std::io::Result<()> {
     let config = ForgeConfig::load()?;
 
     // Check if the build directory exists and if not create it
@@ -34,10 +39,8 @@ pub fn handle_build(args: &BuildArgs) -> std::io::Result<()> {
     let build_cmd =
         format!("{compiler} {included_src_files} {default_flags} {additional_flags} -o {exe_path}");
 
-    println!("{}", build_cmd);
-    exec(&build_cmd)?;
-
-    println!("Project built successfully!");
+    println!("> {}", build_cmd);
+    exec_raw(&build_cmd)?;
 
     Ok(())
 }

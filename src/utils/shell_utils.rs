@@ -1,21 +1,60 @@
-use std::{io::Error, process::Command};
+use std::io::{self, Error, Read, Write};
+use std::process::{Command, Stdio};
 
-pub fn exec(command: &str) -> std::io::Result<String> {
+/// exec: Streams output to terminal AND captures it for Forge to use.
+pub fn exec(command: &str) -> io::Result<String> {
     let parts: Vec<&str> = command.split_whitespace().collect();
-    let cmd = parts[0];
-    let args = &parts[1..];
+    if parts.is_empty() {
+        return Err(Error::other("Empty command"));
+    }
 
-    let output = Command::new(cmd).args(args).output()?; // This returns an io::Error if the command fails to start
+    let mut child = Command::new(parts[0])
+        .args(&parts[1..])
+        .stdout(Stdio::piped())
+        .stderr(Stdio::piped())
+        .spawn()?;
 
-    if output.status.success() {
-        // Convert bytes to String, trim whitespace/newlines
-        Ok(String::from_utf8_lossy(&output.stdout).trim().to_string())
+    let mut captured = String::new();
+
+    // We use a simple loop to read stdout while it's running
+    if let Some(mut stdout) = child.stdout.take() {
+        let mut buffer = [0; 1024];
+        loop {
+            let n = stdout.read(&mut buffer)?;
+            if n == 0 {
+                break;
+            }
+            let chunk = &buffer[..n];
+
+            // Stream to terminal
+            io::stdout().write_all(chunk)?;
+            io::stdout().flush()?;
+
+            // Capture for return
+            captured.push_str(&String::from_utf8_lossy(chunk));
+        }
+    }
+
+    let status = child.wait()?;
+    if status.success() {
+        Ok(captured.trim().to_string())
     } else {
-        // Capture stderr to see WHY it failed
-        let err_msg = String::from_utf8_lossy(&output.stderr);
-        Err(Error::other::<_>(format!(
-            "Command '{}' failed: {}",
-            cmd, err_msg
-        )))
+        Err(Error::other(format!("Command '{}' failed", parts[0])))
+    }
+}
+
+/// exec_raw: Runs command purely in the terminal (no capture).
+pub fn exec_raw(command: &str) -> io::Result<()> {
+    let parts: Vec<&str> = command.split_whitespace().collect();
+    if parts.is_empty() {
+        return Err(Error::other("Empty command"));
+    }
+
+    let status = Command::new(parts[0]).args(&parts[1..]).status()?;
+
+    if status.success() {
+        Ok(())
+    } else {
+        Err(Error::other(format!("Command '{}' failed", parts[0])))
     }
 }

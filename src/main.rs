@@ -18,7 +18,7 @@ enum Commands {
     Init(commands::init::InitArgs),
     Add(commands::add::AddArgs),
     Build(commands::build::BuildArgs),
-    // Run,
+    Run(commands::run::RunArgs),
 }
 
 fn main() {
@@ -38,6 +38,11 @@ fn main() {
         Commands::Build(build_args) => {
             if let Err(e) = commands::build::handle_build(build_args) {
                 eprintln!("Error building project: {}", e);
+            }
+        }
+        Commands::Run(run_args) => {
+            if let Err(e) = commands::run::handle_run(run_args) {
+                eprintln!("Error running project: {}", e);
             }
         }
     }
