@@ -44,6 +44,20 @@ pub fn create_dir_if_not_exists(dir_name: &str) -> std::io::Result<()> {
     Ok(())
 }
 
+pub fn write_file(path: &Path, contents: &str) -> std::io::Result<()> {
+    let existed = path.exists();
+
+    fs::write(path, contents)?;
+
+    if !existed {
+        println!("New file added: {}", path.to_string_lossy());
+    } else {
+        println!("File updated: {}", path.to_string_lossy());
+    }
+
+    Ok(())
+}
+
 pub fn get_files_in_dir_recursive(dir_name: &str, include_path: bool) -> Result<Vec<String>> {
     let path = Path::new(dir_name);
     let mut filenames = Vec::new();

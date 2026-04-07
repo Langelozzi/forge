@@ -1,3 +1,4 @@
+use crate::constants;
 use crate::templates::init_templates;
 use crate::utils::sys_utils;
 use clap::Args;
@@ -27,6 +28,9 @@ pub fn handle_init(args: &InitArgs) -> std::io::Result<()> {
     generate_main_file(project_path)?;
 
     println!("Project '{}' initialized.", args.name);
+    println!("To get started:");
+    println!("  > cd {}", args.name);
+    println!("  > {} run", constants::CMD_NAME);
     Ok(())
 }
 
@@ -41,7 +45,7 @@ fn generate_config_file(project_path: &Path, proj_name: &str) -> std::io::Result
     let content = init_templates::FORGE_TOML
         .replace("{name}", proj_name)
         .replace("{compiler}", compiler_path);
-    fs::write(project_path.join("forge.toml"), &content)?;
+    fs::write(project_path.join(constants::CONFIG_FILENAME), &content)?;
     Ok(())
 }
 
