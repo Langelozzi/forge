@@ -1,27 +1,38 @@
 use crate::constants::CONFIG_FILENAME;
+use std::env;
 use std::fs;
-use std::io::{Error, ErrorKind, Result};
+use std::io::Result;
 use std::path::Path;
+use std::path::PathBuf;
 
-pub fn assert_toml_in_root() -> Result<()> {
-    match fs::exists(CONFIG_FILENAME) {
-        // Case 1: File exists
-        Ok(true) => Ok(()),
+pub fn change_to_proj_root() -> std::io::Result<()> {
+    if let Some(root) = find_project_root() {
+        env::set_current_dir(&root)?;
+        Ok(())
+    } else {
+        eprintln!(
+            "Error: No forge project found. Could not find {}.\nUse `forge init` to start a new forge project.",
+            CONFIG_FILENAME
+        );
+        std::process::exit(1);
+    }
+}
 
-        // Case 2: File is missing
-        Ok(false) => {
-            eprintln!(
-                "Error: Could not find {} in the current directory.",
-                CONFIG_FILENAME
-            );
-            eprintln!("Are you sure you are in a Forge project root?");
+pub fn find_project_root() -> Option<PathBuf> {
+    let mut current_dir = env::current_dir().ok()?;
 
-            // Return a clean error
-            Err(Error::new(ErrorKind::NotFound, "Forge config not found"))
+    // Backtrack until we find the forge.toml
+    loop {
+        // Does forge.toml exist here?
+        if current_dir.join(CONFIG_FILENAME).exists() {
+            return Some(current_dir);
         }
 
-        // Case 3: We can't even check (e.g., permission denied)
-        Err(e) => Err(e),
+        // Try the parent directory
+        if !current_dir.pop() {
+            // Reached the system root (/) without finding it
+            return None;
+        }
     }
 }
 

@@ -2,7 +2,7 @@ use clap::Args;
 
 use crate::config::ForgeConfig;
 use crate::constants;
-use crate::utils::fs_utils::assert_toml_in_root;
+use crate::utils::fs_utils::change_to_proj_root;
 use crate::utils::fs_utils::create_dir_if_not_exists;
 use crate::utils::fs_utils::get_files_in_dir_recursive;
 use crate::utils::shell_utils::exec;
@@ -14,7 +14,7 @@ pub struct BuildArgs {
 }
 
 pub fn handle_build(args: &BuildArgs) -> std::io::Result<()> {
-    assert_toml_in_root()?;
+    change_to_proj_root()?;
 
     let config = ForgeConfig::load()?;
 

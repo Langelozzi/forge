@@ -5,7 +5,7 @@ use std::path::Path;
 use crate::constants::INCLUDE_DIR;
 use crate::constants::SRC_DIR;
 use crate::templates::add_templates;
-use crate::utils::fs_utils::assert_toml_in_root;
+use crate::utils::fs_utils::change_to_proj_root;
 
 #[derive(Args, Debug, Clone)]
 pub struct AddArgs {
@@ -13,7 +13,7 @@ pub struct AddArgs {
 }
 
 pub fn handle_add(args: &AddArgs) -> std::io::Result<()> {
-    assert_toml_in_root()?;
+    change_to_proj_root()?;
 
     generate_module_c(&args.module_name)?;
     generate_module_h(&args.module_name)?;
