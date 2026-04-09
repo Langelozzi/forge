@@ -19,6 +19,7 @@ enum Commands {
     Add(commands::add::AddArgs),
     Build(commands::build::BuildArgs),
     Run(commands::run::RunArgs),
+    Clean,
 }
 
 fn main() {
@@ -43,6 +44,11 @@ fn main() {
         Commands::Run(run_args) => {
             if let Err(e) = commands::run::handle_run(run_args) {
                 eprintln!("Error running project: {}", e);
+            }
+        }
+        Commands::Clean => {
+            if let Err(e) = commands::clean::handle_clean() {
+                eprintln!("Error cleaning up build artifacts: {}", e);
             }
         }
     }
