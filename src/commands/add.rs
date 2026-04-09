@@ -6,6 +6,7 @@ use crate::constants::SRC_DIR;
 use crate::templates::add_templates;
 use crate::utils::fs_utils::change_to_proj_root;
 use crate::utils::fs_utils::write_file;
+use crate::utils::compile_commands::generate_compile_commands;
 
 #[derive(Args, Debug, Clone)]
 pub struct AddArgs {
@@ -17,6 +18,7 @@ pub fn handle_add(args: &AddArgs) -> std::io::Result<()> {
 
     generate_module_c(&args.module_name)?;
     generate_module_h(&args.module_name)?;
+    generate_compile_commands()?;
 
     Ok(())
 }

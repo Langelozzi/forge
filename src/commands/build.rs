@@ -7,6 +7,7 @@ use crate::utils::fs_utils::create_dir_if_not_exists;
 use crate::utils::fs_utils::get_files_in_dir_recursive;
 use crate::utils::shell_utils::exec_raw;
 use crate::utils::vec_utils::difference;
+use crate::utils::compile_commands::generate_compile_commands;
 
 #[derive(Args, Debug, Clone)]
 pub struct BuildArgs {}
@@ -15,6 +16,7 @@ pub fn handle_build(args: &BuildArgs) -> std::io::Result<()> {
     change_to_proj_root()?;
 
     build()?;
+    generate_compile_commands()?;
     println!("Project built successfully!");
 
     Ok(())
