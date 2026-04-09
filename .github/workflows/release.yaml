@@ -61,10 +61,23 @@ jobs:
         with:
           path: artifacts
 
+      - name: Prepare release files
+        run: |
+          mkdir -p release_files
+          for dir in artifacts/*/; do
+            asset_name=$(basename "$dir")
+            binary=$(find "$dir" -type f -executable | head -1)
+            if [ -n "$binary" ]; then
+              cp "$binary" "release_files/$asset_name"
+              echo "Copied $binary to release_files/$asset_name"
+            fi
+          done
+          ls -la release_files/
+
       - name: Create Release
         uses: softprops/action-gh-release@v1
         with:
           generate_release_notes: true
-          files: artifacts/*/*
+          files: release_files/*
         env:
           GITHUB_TOKEN: ${{ github.token }}
