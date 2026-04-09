@@ -7,7 +7,14 @@ mod templates;
 mod utils;
 
 #[derive(Parser, Debug)]
-#[command(author, version, about, long_about = None)]
+#[command(
+    author = "Forge Contributors",
+    version,
+    about = "A lightweight C project build tool",
+    long_about = "Forge is a simple yet powerful build tool for C projects.\n\n\
+                  It provides an easy way to initialize, build, and manage C projects \
+                  with automatic LSP configuration generation (compile_commands.json)."
+)]
 struct Cli {
     #[command(subcommand)]
     cmd: Commands,
@@ -15,10 +22,15 @@ struct Cli {
 
 #[derive(Subcommand, Debug, Clone)]
 enum Commands {
+    #[command(about = "Initialize a new C project")]
     Init(commands::init::InitArgs),
+    #[command(about = "Add a new module (creates .c and .h files)")]
     Add(commands::add::AddArgs),
+    #[command(about = "Build the project")]
     Build(commands::build::BuildArgs),
+    #[command(about = "Build and run the project")]
     Run(commands::run::RunArgs),
+    #[command(about = "Clean build artifacts")]
     Clean,
 }
 

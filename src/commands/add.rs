@@ -10,6 +10,7 @@ use crate::utils::compile_commands::generate_compile_commands;
 
 #[derive(Args, Debug, Clone)]
 pub struct AddArgs {
+    #[arg(help = "Name of the module to add (creates MODULE_NAME.c and MODULE_NAME.h)")]
     pub module_name: String,
 }
 

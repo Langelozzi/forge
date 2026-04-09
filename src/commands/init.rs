@@ -7,7 +7,8 @@ use std::path::Path;
 
 #[derive(Args, Debug, Clone)]
 pub struct InitArgs {
-    pub name: String, // Name of the project
+    #[arg(help = "Name of the project to create")]
+    pub name: String,
 }
 
 pub fn handle_init(args: &InitArgs) -> std::io::Result<()> {
