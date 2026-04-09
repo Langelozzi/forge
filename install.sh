@@ -18,20 +18,10 @@ ARCH=$(uname -m)
 # Map to release asset names
 case "${OS}" in
   Darwin)
-    if [ "$ARCH" = "arm64" ] || [ "$ARCH" = "aarch64" ]; then
-      ASSET_NAME="forge-macos-aarch64"
-    else
-      ASSET_NAME="forge-macos-x86_64"
-    fi
+    ASSET_NAME="forge-macos"
     ;;
   Linux)
-    if [ "$ARCH" = "x86_64" ]; then
-      ASSET_NAME="forge-linux-x86_64"
-    else
-      echo -e "${RED}Error: Unsupported Linux architecture: $ARCH${NC}"
-      echo "Only x86_64 is supported for Linux."
-      exit 1
-    fi
+    ASSET_NAME="forge-linux"
     ;;
   *)
     echo -e "${RED}Error: Unsupported operating system: $OS${NC}"
