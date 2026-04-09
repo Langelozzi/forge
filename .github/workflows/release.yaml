@@ -41,11 +41,15 @@ jobs:
       - name: Strip binary (macOS/Linux)
         run: strip target/${{ matrix.target }}/release/${{ matrix.artifact_name }}
 
-      - name: Upload artifacts
+      - name: Rename binary with asset name
+        run: cp target/${{ matrix.target }}/release/${{ matrix.artifact_name }} ${{ matrix.asset_name }}
+
+      - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.asset_name }}
-          path: target/${{ matrix.target }}/release/${{ matrix.artifact_name }}
+          path: ${{ matrix.asset_name }}
+          if-no-files-found: error
 
   release:
     name: Create Release
@@ -66,13 +70,14 @@ jobs:
           mkdir -p release_files
           for dir in artifacts/*/; do
             asset_name=$(basename "$dir")
-            binary=$(find "$dir" -type f -executable | head -1)
-            if [ -n "$binary" ]; then
-              cp "$binary" "release_files/$asset_name"
-              echo "Copied $binary to release_files/$asset_name"
-            fi
+            for file in "$dir"*; do
+              if [ -f "$file" ]; then
+                cp "$file" "release_files/$asset_name"
+                echo "Copied $file to release_files/$asset_name"
+              fi
+            done
           done
-          ls -la release_files/
+          ls -lh release_files/
 
       - name: Create Release
         uses: softprops/action-gh-release@v1

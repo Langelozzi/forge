@@ -61,14 +61,18 @@ echo -e "${YELLOW}Downloading from: $DOWNLOAD_URL${NC}"
 TEMP_DIR=$(mktemp -d)
 trap "rm -rf $TEMP_DIR" EXIT
 
-# Download the binary
-if ! curl -fsSL -o "$TEMP_DIR/$BINARY_NAME" "$DOWNLOAD_URL"; then
+# Download the binary (it will be named forge-<platform>)
+DOWNLOADED_FILE="$TEMP_DIR/$ASSET_NAME"
+if ! curl -fsSL -o "$DOWNLOADED_FILE" "$DOWNLOAD_URL"; then
   echo -e "${RED}Error: Failed to download $BINARY_NAME${NC}"
   exit 1
 fi
 
 # Make it executable
-chmod +x "$TEMP_DIR/$BINARY_NAME"
+chmod +x "$DOWNLOADED_FILE"
+
+# Rename to just 'forge'
+mv "$DOWNLOADED_FILE" "$TEMP_DIR/$BINARY_NAME"
 
 # Determine installation directory
 INSTALL_DIR="$HOME/.local/bin"
